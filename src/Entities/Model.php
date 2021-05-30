@@ -36,7 +36,17 @@ class Model extends Entity
      */
     public function customizable(): bool
     {
-        return Arr::get($this->supported_features, 'custom_language_model', false);
+        return Arr::get($this, 'supported_features.custom_language_model', false);
+    }
+
+    /**
+     * Determine if the model is a next gen model.
+     *
+     * @return bool
+     */
+    public function isNextGen(): bool
+    {
+        return Arr::has((array) $this->supported_features, 'low_latency');
     }
 
     /**
@@ -46,7 +56,7 @@ class Model extends Entity
      */
     public function lowLatency(): bool
     {
-        return Arr::get($this->supported_features, 'low_latency', false);
+        return Arr::get($this, 'supported_features.low_latency', false);
     }
 
     /**
@@ -56,6 +66,6 @@ class Model extends Entity
      */
     public function speakerLabels(): bool
     {
-        return Arr::get($this->supported_features, 'speaker_labels', false);
+        return Arr::get($this, 'supported_features.speaker_labels', false);
     }
 }

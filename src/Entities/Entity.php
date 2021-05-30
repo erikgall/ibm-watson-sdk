@@ -2,20 +2,22 @@
 
 namespace EGALL\Watson\Entities;
 
+use ArrayAccess;
 use DateTimeInterface;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\JsonEncodingException;
 
 /**
  * The base model/entity.
  *
  * @author Erik Galloway <egalloway@claruscare.com>
  */
-class Entity implements Arrayable
+class Entity implements Arrayable, ArrayAccess
 {
     /**
      * The built-in, primitive cast types supported by Eloquent.
@@ -57,6 +59,13 @@ class Entity implements Arrayable
     protected $casts = [];
 
     /**
+     * The date format to cast timestamps to.
+     *
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:s';
+
+    /**
      * The attributes that should be filled during hydration.
      *
      * @var array
@@ -86,41 +95,35 @@ class Entity implements Arrayable
             $attributes = $this->getAttributes()
         );
     }
-    
-    /**
-     * Dynamically retrieve attributes on the model.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        return $this->getAttribute($name);
-    }
-    
-    /**
-     * Dynamically set attributes on the model.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
-     */
-    public function __set($name, $value)
-    {
-        return $this->setAttribute($name, $value);
-    }
 
     /**
      * Hydrate the model from an array.
      *
-     * @param array $data
-     * @return void
+     * @param  array $data
+     * @return $this
      */
-    public function fill(array $data = []): void
+    public function fill(array $data = [])
     {
-        foreach ($this->getFillable() as $attribute) {
-            $this->attributes[$attribute] = Arr::get($data, $attribute);
+        foreach ($data as $attribute => $value) {
+            if ($this->isFillable($attribute)) {
+                $this->setAttribute($attribute, $value);
+            }
         }
+
+        return $this;
+    }
+
+    /**
+     * Convert a DateTime to a storable string.
+     *
+     * @param  mixed  $value
+     * @return string|null
+     */
+    public function fromDateTime($value)
+    {
+        return empty($value) ? $value : $this->asDateTime($value)->format(
+            $this->dateFormat
+        );
     }
 
     /**
@@ -184,8 +187,7 @@ class Entity implements Arrayable
     /**
      * Get a plain attribute (not a relationship).
      *
-     * @param  string  $key
-     * @param mixed $attribute
+     * @param  string $attribute
      * @return mixed
      */
     public function getAttributeValue($attribute)
@@ -195,6 +197,8 @@ class Entity implements Arrayable
         if ($this->hasCast($attribute)) {
             return $this->castAttribute($attribute, $value);
         }
+
+        return $value;
     }
 
     /**
@@ -236,6 +240,71 @@ class Entity implements Arrayable
     }
 
     /**
+     * Determine if the given attribute may be mass assigned.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function isFillable($key)
+    {
+        // If the key is in the "fillable" array, we can of course assume that it's
+        // a fillable attribute. Otherwise, we will check the guarded array when
+        // we need to determine if the attribute is black-listed on the model.
+        if (in_array($key, $this->getFillable())) {
+            return true;
+        }
+
+        return empty($this->getFillable()) &&
+            strpos($key, '.') === false &&
+            ! Str::startsWith($key, '_');
+    }
+
+    /**
+     * Determine if the given attribute exists.
+     *
+     * @param  mixed  $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return ! is_null($this->getAttribute($offset));
+    }
+
+    /**
+     * Get the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->getAttribute($offset);
+    }
+
+    /**
+     * Set the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @param  mixed  $value
+     * @return void
+     */
+    public function offsetSet($offset, $value): void
+    {
+        $this->setAttribute($offset, $value);
+    }
+
+    /**
+     * Unset the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @return void
+     */
+    public function offsetUnset($offset): void
+    {
+        unset($this->attributes[$offset]);
+    }
+
+    /**
      * Set the given attribute's value.
      *
      * @param  string $attribute
@@ -244,6 +313,14 @@ class Entity implements Arrayable
      */
     public function setAttribute($attribute, $value)
     {
+        if ($value && $this->isDateCastable($attribute)) {
+            $value = $this->fromDateTime($value);
+        }
+
+        if (! is_null($value) && $this->isJsonCastable($attribute)) {
+            $value = $this->castAttributeAsJson($attribute, $value);
+        }
+
         $this->attributes[$attribute] = $value;
 
         return $this;
@@ -257,6 +334,51 @@ class Entity implements Arrayable
     public function toArray()
     {
         return $this->attributesToArray();
+    }
+
+    /**
+     * Dynamically retrieve attributes on the model.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return $this->getAttribute($key);
+    }
+
+    /**
+     * Determine if an attribute or relation exists on the model.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    /**
+     * Dynamically set attributes on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        return $this->setAttribute($key, $value);
+    }
+
+    /**
+     * Unset an attribute on the model.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function __unset($key): void
+    {
+        $this->offsetUnset($key);
     }
 
     /**
@@ -360,6 +482,17 @@ class Entity implements Arrayable
     }
 
     /**
+     * Encode the given value as JSON.
+     *
+     * @param  mixed  $value
+     * @return string
+     */
+    protected function asJson($value)
+    {
+        return json_encode($value);
+    }
+
+    /**
      * Return a timestamp as unix timestamp.
      *
      * @param  mixed  $value
@@ -373,9 +506,8 @@ class Entity implements Arrayable
     /**
      * Cast an attribute to a native PHP type.
      *
-     * @param  string  $key
+     * @param  string $attribute
      * @param  mixed  $value
-     * @param mixed $attribute
      * @return mixed
      */
     protected function castAttribute($attribute, $value)
@@ -415,6 +547,28 @@ class Entity implements Arrayable
                 return $this->asDateTime($value);
             case 'timestamp':
                 return $this->asTimestamp($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Cast the given attribute to JSON.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return string
+     */
+    protected function castAttributeAsJson($key, $value)
+    {
+        $value = $this->asJson($value);
+
+        if ($value === false) {
+            throw JsonEncodingException::forAttribute(
+                $this,
+                $key,
+                json_last_error_msg()
+            );
         }
 
         return $value;
@@ -463,6 +617,17 @@ class Entity implements Arrayable
     }
 
     /**
+     * Determine whether a value is Date / DateTime castable for inbound manipulation.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    protected function isDateCastable($key)
+    {
+        return $this->hasCast($key, ['date', 'datetime']);
+    }
+
+    /**
      * Determine if the cast type is a decimal cast.
      *
      * @param  string  $cast
@@ -471,6 +636,17 @@ class Entity implements Arrayable
     protected function isDecimalCast($cast)
     {
         return strncmp($cast, 'decimal:', 8) === 0;
+    }
+
+    /**
+     * Determine whether a value is JSON castable for inbound manipulation.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    protected function isJsonCastable($key)
+    {
+        return $this->hasCast($key, ['array', 'json', 'object', 'collection']);
     }
 
     /**
