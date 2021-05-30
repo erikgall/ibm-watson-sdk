@@ -1,10 +1,15 @@
 <?php
 
-namespace Erikgall\IbmWatsonSdk;
+namespace EGALL\Watson;
 
 use Illuminate\Support\ServiceProvider;
 
-class IbmWatsonSdkServiceProvider extends ServiceProvider
+/**
+ * IBM Watson Laravel service provider.
+ *
+ * @author Erik Galloway <egalloway@claruscare.com>
+ */
+class WatsonServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -54,7 +59,7 @@ class IbmWatsonSdkServiceProvider extends ServiceProvider
 
         // Register the main class to use with the facade
         $this->app->singleton('watson', function () {
-            return new IbmWatsonSdk;
+            return new Watson;
         });
     }
 }

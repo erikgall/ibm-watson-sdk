@@ -1,13 +1,15 @@
 <?php
 
-namespace Erikgall\IbmWatsonSdk;
+namespace EGALL\Watson;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Erikgall\IbmWatsonSdk\Skeleton\SkeletonClass
+ * IBM Watson Laravel facade.
+ *
+ * @author Erik Galloway <egalloway@claruscare.com>
  */
-class IbmWatsonSdkFacade extends Facade
+class WatsonFacade extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -16,6 +18,6 @@ class IbmWatsonSdkFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'ibm-watson-sdk';
+        return 'watson';
     }
 }

@@ -1,8 +1,13 @@
 <?php
 
-namespace Erikgall\IbmWatsonSdk;
+namespace EGALL\Watson;
 
-class IbmWatsonSdk
+/**
+ * IBM Watson SDK.
+ *
+ * @author Erik Galloway <egalloway@claruscare.com>
+ */
+class Watson
 {
-    // Build your next great package.
+    //
 }
