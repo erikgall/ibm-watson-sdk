@@ -63,7 +63,7 @@ class Entity implements Arrayable, ArrayAccess
      *
      * @var string
      */
-    protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dateFormat = 'Y-m-d\TH:i:s.u\Z';
 
     /**
      * The attributes that should be filled during hydration.
@@ -92,7 +92,7 @@ class Entity implements Arrayable, ArrayAccess
     public function attributesToArray()
     {
         return $this->addCastAttributesToArray(
-            $attributes = $this->getAttributes()
+            $this->getAttributes()
         );
     }
 

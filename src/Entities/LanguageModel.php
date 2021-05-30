@@ -5,11 +5,11 @@ namespace EGALL\Watson\Entities;
 use Illuminate\Support\Arr;
 
 /**
- * Base model entity.
+ * Custom Language model entity.
  *
  * @author Erik Galloway <egalloway@claruscare.com>
  */
-class Model extends Entity
+class LanguageModel extends Entity
 {
     /**
      * The entity's attributes.
@@ -17,7 +17,17 @@ class Model extends Entity
      * @var array
      */
     protected $attributes = [
-        'supported_features' => [],
+        'versions' => [],
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created' => 'datetime',
+        'updated' => 'datetime',
     ];
 
     /**
@@ -26,7 +36,9 @@ class Model extends Entity
      * @var array
      */
     protected $fillable = [
-        'name', 'language', 'url', 'supported_features', 'description', 'rate',
+        'customization_id', 'owner', 'name', 'base_model_name', 'status',
+        'language', 'dialect', 'versions', 'description','progress', 'error',
+        'warnings', 'created', 'updated',
     ];
 
     /**
