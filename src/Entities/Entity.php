@@ -194,6 +194,10 @@ class Entity implements Arrayable, ArrayAccess
     {
         $value = $this->getAttributeFromArray($attribute);
 
+        if ($this->hasGetMutator($attribute)) {
+            return $this->mutateAttribute($attribute, $value);
+        }
+
         if ($this->hasCast($attribute)) {
             return $this->castAttribute($attribute, $value);
         }
@@ -237,6 +241,17 @@ class Entity implements Arrayable, ArrayAccess
         }
 
         return false;
+    }
+
+    /**
+     * Determine if a get mutator exists for an attribute.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function hasGetMutator($key)
+    {
+        return method_exists($this, 'get'.Str::studly($key).'Attribute');
     }
 
     /**
@@ -658,6 +673,18 @@ class Entity implements Arrayable, ArrayAccess
     protected function isStandardDateFormat($value)
     {
         return preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $value);
+    }
+
+    /**
+     * Get the value of an attribute using its mutator.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return mixed
+     */
+    protected function mutateAttribute($key, $value)
+    {
+        return $this->{'get'.Str::studly($key).'Attribute'}($value);
     }
 
     /**
