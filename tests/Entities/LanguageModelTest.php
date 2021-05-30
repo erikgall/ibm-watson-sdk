@@ -36,6 +36,12 @@ class LanguageModelTest extends TestCase
     }
 
     /** @test */
+    public function it_allows_access_to_the_customization_id_by_accessing_the_id_attribute(): void
+    {
+        $this->assertEquals($this->data['customization_id'], $this->model->id);
+    }
+
+    /** @test */
     public function it_casts_the_created_attribute_to_an_array(): void
     {
         $this->assertInstanceOf(BaseCarbon::class, $this->model->created);

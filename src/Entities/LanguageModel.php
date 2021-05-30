@@ -2,8 +2,6 @@
 
 namespace EGALL\Watson\Entities;
 
-use Illuminate\Support\Arr;
-
 /**
  * Custom Language model entity.
  *
@@ -36,48 +34,17 @@ class LanguageModel extends Entity
      * @var array
      */
     protected $fillable = [
-        'customization_id', 'owner', 'name', 'base_model_name', 'status',
-        'language', 'dialect', 'versions', 'description','progress', 'error',
-        'warnings', 'created', 'updated',
+        'customization_id', 'owner', 'name', 'base_model_name', 'status', 'language',
+        'dialect', 'versions', 'description','progress', 'created', 'updated',
     ];
 
     /**
-     * Determine if the model can be customized.
+     * Get the (customization) ID attribute.
      *
-     * @return bool
+     * @return string|null
      */
-    public function customizable(): bool
+    public function getIdAttribute()
     {
-        return Arr::get($this, 'supported_features.custom_language_model', false);
-    }
-
-    /**
-     * Determine if the model is a next gen model.
-     *
-     * @return bool
-     */
-    public function isNextGen(): bool
-    {
-        return Arr::has((array) $this->supported_features, 'low_latency');
-    }
-
-    /**
-     * Determine if the model supports low latency (next-gen models only).
-     *
-     * @return bool
-     */
-    public function lowLatency(): bool
-    {
-        return Arr::get($this, 'supported_features.low_latency', false);
-    }
-
-    /**
-     * Determine if the model supports speaker labels.
-     *
-     * @return bool
-     */
-    public function speakerLabels(): bool
-    {
-        return Arr::get($this, 'supported_features.speaker_labels', false);
+        return $this->customization_id;
     }
 }
