@@ -1,10 +1,10 @@
-# Very short description of the package
+# IBM Watson SDK
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/erikgall/ibm-watson-sdk.svg?style=flat-square)](https://packagist.org/packages/erikgall/ibm-watson-sdk)
 [![Total Downloads](https://img.shields.io/packagist/dt/erikgall/ibm-watson-sdk.svg?style=flat-square)](https://packagist.org/packages/erikgall/ibm-watson-sdk)
 ![GitHub Actions](https://github.com/erikgall/ibm-watson-sdk/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+The unofficial IBM Watson SDK with a focus on Speech to Text.
 
 ## Installation
 
@@ -16,9 +16,7 @@ composer require erikgall/ibm-watson-sdk
 
 ## Usage
 
-```php
-// Usage description here
-```
+> TODO
 
 ### Testing
 
@@ -46,7 +44,3 @@ If you discover any security related issues, please email egalloway@claruscare.c
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
