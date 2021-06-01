@@ -13,7 +13,7 @@ class CorpusTest extends TestCase
     protected $corpus;
 
     /**
-     * The data used to create the model.
+     * The data used to create the entity.
      *
      * @var array
      */

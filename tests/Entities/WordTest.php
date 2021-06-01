@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 class WordTest extends TestCase
 {
     /**
-     * The data used to create the model.
+     * The data used to create the entity.
      *
      * @var array
      */
