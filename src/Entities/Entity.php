@@ -253,6 +253,17 @@ class Entity implements Arrayable, ArrayAccess
     }
 
     /**
+     * Determine if a set mutator exists for an attribute.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function hasSetMutator($key)
+    {
+        return method_exists($this, 'set'.Str::studly($key).'Attribute');
+    }
+
+    /**
      * Determine if the given attribute may be mass assigned.
      *
      * @param  string  $key
@@ -326,6 +337,10 @@ class Entity implements Arrayable, ArrayAccess
      */
     public function setAttribute($attribute, $value)
     {
+        if ($this->hasSetMutator($attribute)) {
+            return $this->setMutatedAttributeValue($attribute, $value);
+        }
+
         if ($value && $this->isDateCastable($attribute)) {
             $value = $this->fromDateTime($value);
         }
@@ -694,5 +709,17 @@ class Entity implements Arrayable, ArrayAccess
     protected function serializeDate(DateTimeInterface $date)
     {
         return Carbon::instance($date)->toJSON();
+    }
+
+    /**
+     * Set the value of an attribute using its mutator.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return mixed
+     */
+    protected function setMutatedAttributeValue($key, $value)
+    {
+        return $this->{'set'.Str::studly($key).'Attribute'}($value);
     }
 }
