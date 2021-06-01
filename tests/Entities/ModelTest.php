@@ -74,7 +74,7 @@ class ModelTest extends TestCase
     {
         $this->assertTrue($this->model->isNextGen());
 
-        unset($this->model['supported_features']);
+        $this->model->name = 'en-US_NarrowbandModel';
 
         $this->assertFalse($this->model->isNextGen());
     }

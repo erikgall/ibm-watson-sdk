@@ -3,6 +3,7 @@
 namespace EGALL\Watson\Entities;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 /**
  * Base model entity.
@@ -46,7 +47,7 @@ class Model extends Entity
      */
     public function isNextGen(): bool
     {
-        return Arr::has((array) $this->supported_features, 'low_latency');
+        return ! Str::contains($this->name, 'Model');
     }
 
     /**
