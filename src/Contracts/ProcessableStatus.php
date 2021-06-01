@@ -12,15 +12,15 @@ interface ProcessableStatus
     /**
      * Constant representing an analyzed/processed corpus status.
      */
-    const ANALYZED = 'analyzed';
+    public const ANALYZED = 'analyzed';
 
     /**
      * Constant representing a processing corpus status.
      */
-    const PROCESSING = 'being_processed';
+    public const PROCESSING = 'being_processed';
 
     /**
      * Constant representing an undetermined corpus status.
      */
-    const UNDETERMINED = 'undetermined';
+    public const UNDETERMINED = 'undetermined';
 }

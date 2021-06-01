@@ -14,14 +14,14 @@ interface TrainableStatus
      *
      * The model is trained and ready to use.
      */
-    const AVAILABLE = 'available';
+    public const AVAILABLE = 'available';
 
     /**
      * Constant representing a model failed status.
      *
      * Training of the model failed.
      */
-    const FAILED = 'failed';
+    public const FAILED = 'failed';
 
     /**
      * Constant representing a model pending status.
@@ -29,7 +29,7 @@ interface TrainableStatus
      * The model was created but is waiting either for valid training
      * data to be added or for the service to finish analyzing added data.
      */
-    const PENDING = 'pending';
+    public const PENDING = 'pending';
 
     /**
      * Constant representing a model ready status.
@@ -38,19 +38,19 @@ interface TrainableStatus
      * model contains a mix of valid and invalid resources, you need to
      * set the strict parameter to false for the training to proceed.
      */
-    const READY = 'ready';
+    public const READY = 'ready';
 
     /**
      * Constant representing a model training status.
      *
      * The model is currently being trained.
      */
-    const TRAINING = 'training';
+    public const TRAINING = 'training';
 
     /**
      * Constant representing a model upgrading status.
      *
      * The model is currently being upgraded.
      */
-    const UPGRADING = 'upgrading';
+    public const UPGRADING = 'upgrading';
 }
