@@ -2,13 +2,17 @@
 
 namespace EGALL\Watson\Entities;
 
+use EGALL\Watson\Contracts\TrainableStatus;
+
 /**
  * Custom Language model entity.
  *
  * @author Erik Galloway <egalloway@claruscare.com>
  */
-class LanguageModel extends Entity
+class LanguageModel extends Entity implements TrainableStatus
 {
+    use Trainable;
+
     /**
      * The entity's attributes.
      *
@@ -35,7 +39,7 @@ class LanguageModel extends Entity
      */
     protected $fillable = [
         'customization_id', 'owner', 'name', 'base_model_name', 'status', 'language',
-        'dialect', 'versions', 'description','progress', 'created', 'updated',
+        'dialect', 'versions', 'description', 'progress', 'created', 'updated',
     ];
 
     /**

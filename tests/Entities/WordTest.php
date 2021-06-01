@@ -74,7 +74,7 @@ class WordTest extends TestCase
     }
 
     /**
-     * Get the word' data that would be received from Watson API.
+     * Get the word data that would be received from Watson API.
      *
      * @return array
      */

@@ -54,6 +54,66 @@ class LanguageModelTest extends TestCase
     }
 
     /** @test */
+    public function it_checks_if_the_model_is_available_without_any_issues(): void
+    {
+        $this->model->status = LanguageModel::FAILED;
+        $this->assertFalse($this->model->isAvailable());
+
+        $this->model->status = LanguageModel::AVAILABLE;
+        $this->assertTrue($this->model->isAvailable());
+    }
+
+    /** @test */
+    public function it_checks_if_the_model_is_currently_being_trained(): void
+    {
+        $this->model->status = LanguageModel::FAILED;
+        $this->assertFalse($this->model->isTraining());
+
+        $this->model->status = LanguageModel::TRAINING;
+        $this->assertTrue($this->model->isTraining());
+    }
+
+    /** @test */
+    public function it_checks_if_the_model_is_currently_being_upgraded(): void
+    {
+        $this->model->status = LanguageModel::FAILED;
+        $this->assertFalse($this->model->isUpgrading());
+
+        $this->model->status = LanguageModel::UPGRADING;
+        $this->assertTrue($this->model->isUpgrading());
+    }
+
+    /** @test */
+    public function it_checks_if_the_model_is_pending(): void
+    {
+        $this->model->status = LanguageModel::FAILED;
+        $this->assertFalse($this->model->isPending());
+
+        $this->model->status = LanguageModel::PENDING;
+        $this->assertTrue($this->model->isPending());
+    }
+
+    /** @test */
+    public function it_checks_if_the_model_is_ready_to_be_used(): void
+    {
+        $this->model->status = LanguageModel::FAILED;
+        $this->assertFalse($this->model->isReady());
+
+        $this->model->status = LanguageModel::READY;
+        $this->assertTrue($this->model->isReady());
+    }
+
+    /** @test */
+    public function it_checks_if_the_model_training_has_failed(): void
+    {
+        $this->model->status = LanguageModel::UPGRADING;
+        $this->assertFalse($this->model->failed());
+
+        $this->model->status = LanguageModel::FAILED;
+        $this->assertTrue($this->model->failed());
+    }
+
+    /** @test */
     public function it_defaults_the_versions_attribute_to_an_array(): void
     {
         $this->assertEquals([], (new LanguageModel())->versions);

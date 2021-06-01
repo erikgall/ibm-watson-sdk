@@ -107,7 +107,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * Get the grammar' data that would be received from Watson API.
+     * Get the grammar's data that would be received from Watson API.
      *
      * @return array
      */
