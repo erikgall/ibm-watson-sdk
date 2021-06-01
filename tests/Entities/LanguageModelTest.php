@@ -114,12 +114,6 @@ class LanguageModelTest extends TestCase
     }
 
     /** @test */
-    public function it_defaults_the_versions_attribute_to_an_array(): void
-    {
-        $this->assertEquals([], (new LanguageModel())->versions);
-    }
-
-    /** @test */
     public function it_defaults_the_versions_attribute_to_an_empty_array(): void
     {
         $this->assertEquals([], (new LanguageModel())->versions);
