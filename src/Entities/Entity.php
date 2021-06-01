@@ -70,9 +70,7 @@ class Entity implements Arrayable, ArrayAccess
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'language', 'url', 'supported_features', 'description', 'rate',
-    ];
+    protected $fillable = [];
 
     /**
      * Create a new Entity instance.
